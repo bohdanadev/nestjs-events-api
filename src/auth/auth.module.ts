@@ -1,12 +1,16 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { LocalStrategy } from "./local.strategy"; 
-import { User } from "./user.entity";
-import { JwtModule } from "@nestjs/jwt";
-import { AuthService } from "./auth.service";
-import { AuthController } from "./auth.controller";
-import { JwtStrategy } from "./jwt.strategy";
-import { UsersController } from "./users.controller";
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { JwtStrategy } from './jwt.strategy';
+import { LocalStrategy } from './local.strategy';
+import { User } from './user.entity';
+import { UsersController } from './users.controller';
+import { AuthResolver } from './auth.resolver';
+import { UserResolver } from './user.resolver';
+import { UserService } from './user.service';
+import { UserDoesNotExist, UserDoesNotExistConstraint } from './validation/user-does-not-exist.constraint';
 
 @Module({
   imports: [
@@ -15,12 +19,20 @@ import { UsersController } from "./users.controller";
       useFactory: () => ({
         secret: process.env.AUTH_SECRET,
         signOptions: {
-          expiresIn: process.env.JWT_EXP
-        }
-      })
-    })
+          expiresIn: process.env.JWT_EXP,
+        },
+      }),
+    }),
   ],
-  providers: [LocalStrategy, JwtStrategy, AuthService],
-  controllers: [AuthController, UsersController]
+  providers: [
+    LocalStrategy,
+    JwtStrategy,
+    AuthService,
+    AuthResolver,
+    UserResolver,
+    UserService,
+    UserDoesNotExistConstraint
+  ],
+  controllers: [AuthController, UsersController],
 })
-export class AuthModule { }
+export class AuthModule {}

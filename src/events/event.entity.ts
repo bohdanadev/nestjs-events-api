@@ -1,10 +1,21 @@
-import { Expose } from "class-transformer";
-import { User } from "src/auth/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Attendee } from "./attendee.entity";
+import { Expose } from 'class-transformer';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './../auth/user.entity';
+import { Paginated } from './../pagination/paginator';
+import { Attendee } from './attendee.entity';
 
 @Entity()
 export class Event {
+  constructor(partial?: Partial<Event>) {
+    Object.assign(this, partial);
+  }
+
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;
@@ -25,11 +36,8 @@ export class Event {
   @Expose()
   address: string;
 
-
-  @OneToMany(() => Attendee, (attendee) => attendee.event, { 
-   // eager: true
-   // cascade: ['insert', 'update']
-   cascade: true
+  @OneToMany(() => Attendee, (attendee) => attendee.event, {
+    cascade: true,
   })
   @Expose()
   attendees: Attendee[];
@@ -50,3 +58,5 @@ export class Event {
   @Expose()
   attendeeAccepted?: number;
 }
+
+export class PaginatedEvents extends Paginated<Event>(Event) {}
