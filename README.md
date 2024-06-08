@@ -1,73 +1,136 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NESTJS-EVENTS-API
+NestJS REST API with GraphQL Integration
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a robust, full-featured REST API built using modern development practices and tools. The API is developed using the NestJS framework, TypeORM, and MySQL, with authentication managed by Passport.js and JWT. Additionally, it includes GraphQL capabilities with Apollo, making the API reusable and highly flexible. The functionality of the API is verified through unit and end-to-end (e2e) tests.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
+- [Technologies](#technologies)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
+- [Testing](#testing)
+- [API Documentation](#api-documentation)
+- [GraphQL Integration](#graphql-integration)
 
-## Description
+## Technologies
+- **NestJS Framework**: Efficient and scalable architecture for building server-side applications.
+- **TypeORM**: Elegant ORM for working with MySQL databases.
+- **Authentication**: Secure authentication using Passport.js and JWT.
+- **GraphQL with Apollo**: Enhanced flexibility and reusability of the API.
+- **Testing**: Comprehensive unit and e2e tests to ensure code quality and functionality.
+- **Docker**: A containerization platform that allows for easy deployment and scaling of applications.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
+- **Create and Manage Events**: Easily create new events, update their details, and delete them as needed.
+- **Event Attendees**: Keep track of event attendance, attendees statuses, and handle participant information.
+-**Search and Filter**: Efficiently search and filter events based on various criteria such as date, category, location, etc.
+-**GraphQL API**: Utilize the power of GraphQL to fetch precisely the data you need, optimizing API performance.
 
-## Installation
 
-```bash
-$ npm install
-```
+## Getting Started
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-## Running the app
+### Prerequisites
+- Node.js
+- npm or yarn
+- MySQL
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
+### Installation
+Clone the repository:
 
 ```bash
-# unit tests
-$ npm run test
+git clone https://github.com/bohdanadev/nestjs-events-api
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cd nestjs-events-api
 ```
 
-## Support
+Install the dependencies:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm install
+# or
+yarn install
+```
 
-## Stay in touch
+### Configuration
+Create dev.env and e2e.env files in the root directory and add the following configuration variables:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```dev.env
+PORT=3000
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=example
+DB_NAME=nest-events
+DB_DROP_SCHEMA=1
+AUTH_SECRET=secret12345
+JWT_EXP=60m
+```
+```e2e.env
+PORT=3000
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=example
+DB_NAME=nest-events-e2e
+DB_DROP_SCHEMA=1
+AUTH_SECRET=secret123
+JWT_EXP=60m
+```
 
-## License
+### Running the Application
 
-Nest is [MIT licensed](LICENSE).
+Host the Database.
+1. You can host MySQL for local development using Docker:
+
+```bash
+docker-compose up
+```
+The Adminer for database managing will be running at http://localhost:8080.
+
+2. Run the app.
+
+```bash
+npm run start
+# or
+yarn start
+```
+The application will be running at http://localhost:3000.
+
+### Testing
+
+Run unit tests:
+
+```bash
+npm run test
+# or
+yarn test
+```
+
+Run e2e tests:
+
+```bash
+npm run test:e2e
+# or
+yarn test:e2e
+```
+
+### API Documentation
+The REST API documentation is available at http://localhost:3000/api. It provides detailed information on the available endpoints, request/response structures, and authentication methods.
+
+### GraphQL Integration
+GraphQL endpoint is available at http://localhost:3000/graphql. You can use the Apollo Playground to explore and test the GraphQL API.
+
+```graphql
+query {
+  users {
+    id
+    name
+    email
+  }
+}
+```

@@ -26,8 +26,10 @@ import { EventsService } from './events.service';
 import { CreateEventDto } from './inputs/create-event.dto';
 import { ListEvents } from './inputs/list.events';
 import { UpdateEventDto } from './inputs/update-event.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@Controller('/events')
+@ApiTags('events')
+@Controller('events')
 @SerializeOptions({ strategy: 'excludeAll' })
 export class EventsController {
   private readonly logger = new Logger(EventsController.name);
@@ -35,6 +37,7 @@ export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get events' })
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(ClassSerializerInterceptor)
   async findAll(@Query() filter: ListEvents) {
@@ -100,6 +103,7 @@ export class EventsController {
   // }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get an event by id' })
   @UseInterceptors(ClassSerializerInterceptor)
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const event = await this.eventsService.getEventWithAttendeeCount(id);
@@ -111,14 +115,18 @@ export class EventsController {
     return event;
   }
 
+  @ApiBearerAuth()
   @Post()
+  @ApiOperation({ summary: 'Create an event' })
   @UseGuards(AuthGuardJwt)
   @UseInterceptors(ClassSerializerInterceptor)
   async create(@Body() input: CreateEventDto, @CurrentUser() user: User) {
     return await this.eventsService.createEvent(input, user);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
+  @ApiOperation({ summary: 'Update an event' })
   @UseGuards(AuthGuardJwt)
   @UseInterceptors(ClassSerializerInterceptor)
   async update(
@@ -142,7 +150,9 @@ export class EventsController {
     return await this.eventsService.updateEvent(event, input);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete an event' })
   @UseGuards(AuthGuardJwt)
   @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id, @CurrentUser() user: User) {

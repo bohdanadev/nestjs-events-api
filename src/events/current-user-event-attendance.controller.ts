@@ -19,7 +19,9 @@ import { User } from './../auth/user.entity';
 import { AttendeesService } from './attendees.service';
 import { EventsService } from './events.service';
 import { CreateAttendeeDto } from './inputs/create-attendee.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('events-attendance')
 @Controller('events-attendance')
 @SerializeOptions({ strategy: 'excludeAll' })
 export class CurrentUserEventAttendanceController {
@@ -28,7 +30,9 @@ export class CurrentUserEventAttendanceController {
     private readonly attendeesService: AttendeesService,
   ) {}
 
+  @ApiBearerAuth()
   @Get()
+  @ApiOperation({ summary: 'Get current user\'s attendance of events' })
   @UseGuards(AuthGuardJwt)
   @UseInterceptors(ClassSerializerInterceptor)
   async findAll(
