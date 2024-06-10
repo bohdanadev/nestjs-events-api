@@ -28,7 +28,6 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
     autoSchemaFile: true,
-  //debug: true,
     playground: true,
   }),
   AuthModule,

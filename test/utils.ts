@@ -15,18 +15,9 @@ export const tokenForUser = (
   return app.get(AuthService).getTokenForUser(user as User);
 }
 
-//const clearDatabase = async (dataSource: DataSource) => {
-  //const queryRunner = dataSource.createQueryRunner();
-  //await queryRunner.connect();
-  //await queryRunner.query(`DELETE FROM events`);
-   //await queryRunner.query(`DELETE FROM user`);
-  //await queryRunner.release();
-//};
-
 export const loadFixtures = async (
   dataSource: DataSource, sqlFileName: string
 ) => {
-  //await clearDatabase(dataSource);
 
   const sql = fs.readFileSync(
     path.join(__dirname, 'fixtures', sqlFileName),
