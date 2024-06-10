@@ -1,23 +1,36 @@
-import { HttpCode, INestApplication, ValidationPipe } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { Connection } from "typeorm";
-import { AppModule } from "./../src/app.module";
-import { User } from "./../src/auth/user.entity";
-import { loadFixtures as loadFixturesBase, tokenForUser as tokenForUserBase } from './utils';
+import { DataSource } from 'typeorm';
+import { AppModule } from './../src/app.module';
+import { User } from './../src/auth/user.entity';
+import {
+  loadFixtures as loadFixturesBase,
+  tokenForUser as tokenForUserBase,
+} from './utils';
 
 let app: INestApplication;
 let mod: TestingModule;
-let connection: Connection;
+let dataSource: DataSource;
 
-const loadFixtures = async (sqlFileName: string) =>
-  loadFixturesBase(connection, sqlFileName);
+const clearDatabase = async () => {
+  const queryRunner = dataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.query(`DELETE FROM events`);
+  await queryRunner.query(`DELETE FROM user`);
+  await queryRunner.release();
+};
+
+const loadFixtures = async (sqlFileName: string) => {
+  await clearDatabase();
+  loadFixturesBase(dataSource, sqlFileName);
+};
 
 const tokenForUser = (
   user: Partial<User> = {
     id: 1,
     username: 'e2e-test',
-  }
+  },
 ): string => tokenForUserBase(app, user);
 
 describe('Auth (e2e)', () => {
@@ -31,7 +44,7 @@ describe('Auth (e2e)', () => {
 
     await app.init();
 
-    connection = app.get(Connection);
+    dataSource = app.get(DataSource);
   });
 
   afterEach(async () => {
@@ -47,7 +60,7 @@ describe('Auth (e2e)', () => {
         username: 'e2e-test',
         password: 'password'
       })
-      .expect(HttpCode(201))
+      .expect(HttpStatus.CREATED)
       .then(response => {
         expect(response.body.userId).toBe(1);
         expect(response.body.token).toBeDefined();
@@ -58,7 +71,7 @@ describe('Auth (e2e)', () => {
         request(app.getHttpServer())
           .get('/auth/profile')
           .set('Authorization', `Bearer ${response.body.token}`)
-          .expect(HttpCode(200));
+          .expect(HttpStatus.OK);
       });
   });
 
@@ -71,7 +84,7 @@ describe('Auth (e2e)', () => {
         username: 'e2e-test',
         password: 'pazzword'
       })
-      .expect(HttpCode(401));
+      .expect(HttpStatus.UNAUTHORIZED);
   });
 
   it('should return user profile', async () => {
@@ -80,7 +93,7 @@ describe('Auth (e2e)', () => {
     return request(app.getHttpServer())
       .get('/auth/profile')
       .set('Authorization', `Bearer ${tokenForUser()}`)
-      .expect(200).then(response => {
+      .expect(HttpStatus.OK).then(response => {
         expect(response.body.id).toBe(1);
         expect(response.body.username).toBeDefined();
         expect(response.body.firstName).toBeDefined();
@@ -92,7 +105,7 @@ describe('Auth (e2e)', () => {
   it('should throw an error when unauthenticated user requests profile', () => {
     return request(app.getHttpServer())
       .get('/auth/profile')
-      .expect(HttpCode(401));
+      .expect(HttpStatus.UNAUTHORIZED);
   });
 
   it('should not return user\'s password with the profile', async () => {
@@ -101,7 +114,7 @@ describe('Auth (e2e)', () => {
     return request(app.getHttpServer())
       .get('/auth/profile')
       .set('Authorization', `Bearer ${tokenForUser()}`)
-      .expect(HttpCode(200)).then(response => {
+      .expect(HttpStatus.OK).then(response => {
         expect(response.body.password).toBeUndefined()
       });
   });
