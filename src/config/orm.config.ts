@@ -14,7 +14,7 @@ export default registerAs(
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: ["dist/**/*.entity{.ts,.js}"],
+    entities:  [__dirname + '/../**/*.entity.{js,ts}'],
     synchronize: true,
     dropSchema: Boolean(parseInt(process.env.DB_DROP_SCHEMA)),
   }),

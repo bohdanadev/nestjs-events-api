@@ -20,9 +20,6 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       load: [ormConfig],
       expandVariables: true,
       envFilePath: `${process.env.NODE_ENV ?? ''}.env`
-    // envFilePath: 'dev.env'
-    //envFilePath: 'e2e.env'
-
     }),
     TypeOrmModule.forRootAsync({
       useFactory: process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd

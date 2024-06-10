@@ -10,18 +10,9 @@ let app: INestApplication;
 let mod: TestingModule;
 let dataSource: DataSource;
 
-const clearDatabase = async () => {
-  const queryRunner = dataSource.createQueryRunner();
-  await queryRunner.connect();
-  await queryRunner.query(`DELETE FROM events`);
-  await queryRunner.query(`DELETE FROM user`);
-  await queryRunner.release();
-};
-
-const loadFixtures = async (sqlFileName: string) => {
-  await clearDatabase();
+const loadFixtures = async (sqlFileName: string) => 
   loadFixturesBase(dataSource, sqlFileName);
-};
+
 
 const tokenForUser = (
   user: Partial<User> = {
