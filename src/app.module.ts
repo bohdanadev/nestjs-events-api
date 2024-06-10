@@ -8,7 +8,7 @@ import { AppService } from './app.service';
 import { Event } from './events/event.entity';
 import { EventsModule } from './events/events.module';
 import ormConfig from './config/orm.config';
-import ormConfigProd from './config/orm.config prod';
+import ormConfigProd from './config/orm.config.prod';
 import { AuthModule } from './auth/auth.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
