@@ -20,7 +20,7 @@ export class EventsOrganizedByUserController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Get()
-  @ApiOperation({summary: 'Get all events organized by a user'})
+  @ApiOperation({ summary: 'Get all events organized by a user' })
   @UseInterceptors(ClassSerializerInterceptor)
   async findAll(
     @Param('userId', ParseIntPipe) userId: number,

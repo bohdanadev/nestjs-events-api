@@ -13,9 +13,8 @@ let app: INestApplication;
 let mod: TestingModule;
 let dataSource: DataSource;
 
-const loadFixtures = async (sqlFileName: string) => 
+const loadFixtures = async (sqlFileName: string) =>
   loadFixturesBase(dataSource, sqlFileName);
-
 
 const tokenForUser = (
   user: Partial<User> = {
@@ -49,10 +48,10 @@ describe('Auth (e2e)', () => {
       .post('/auth/login')
       .send({
         username: 'e2e-test',
-        password: 'password'
+        password: 'password',
       })
       .expect(HttpStatus.CREATED)
-      .then(response => {
+      .then((response) => {
         expect(response.body.userId).toBe(1);
         expect(response.body.token).toBeDefined();
         expect(response.body.token.length).toBeDefined();
@@ -73,7 +72,7 @@ describe('Auth (e2e)', () => {
       .post('/auth/login')
       .send({
         username: 'e2e-test',
-        password: 'pazzword'
+        password: 'pazzword',
       })
       .expect(HttpStatus.UNAUTHORIZED);
   });
@@ -84,7 +83,8 @@ describe('Auth (e2e)', () => {
     return request(app.getHttpServer())
       .get('/auth/profile')
       .set('Authorization', `Bearer ${tokenForUser()}`)
-      .expect(HttpStatus.OK).then(response => {
+      .expect(HttpStatus.OK)
+      .then((response) => {
         expect(response.body.id).toBe(1);
         expect(response.body.username).toBeDefined();
         expect(response.body.firstName).toBeDefined();
@@ -99,14 +99,15 @@ describe('Auth (e2e)', () => {
       .expect(HttpStatus.UNAUTHORIZED);
   });
 
-  it('should not return user\'s password with the profile', async () => {
+  it("should not return user's password with the profile", async () => {
     await loadFixtures('1-user.sql');
 
     return request(app.getHttpServer())
       .get('/auth/profile')
       .set('Authorization', `Bearer ${tokenForUser()}`)
-      .expect(HttpStatus.OK).then(response => {
-        expect(response.body.password).toBeUndefined()
+      .expect(HttpStatus.OK)
+      .then((response) => {
+        expect(response.body.password).toBeUndefined();
       });
   });
 });

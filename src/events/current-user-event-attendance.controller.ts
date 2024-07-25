@@ -32,7 +32,7 @@ export class CurrentUserEventAttendanceController {
 
   @ApiBearerAuth()
   @Get()
-  @ApiOperation({ summary: 'Get current user\'s attendance of events' })
+  @ApiOperation({ summary: "Get current user's attendance of events" })
   @UseGuards(AuthGuardJwt)
   @UseInterceptors(ClassSerializerInterceptor)
   async findAll(

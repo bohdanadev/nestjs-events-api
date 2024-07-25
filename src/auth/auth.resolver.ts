@@ -3,7 +3,6 @@ import { AuthService } from './auth.service';
 import { TokenOutput } from './inputs/token.output';
 import { LoginInput } from './inputs/login.input';
 
-
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}

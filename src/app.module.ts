@@ -5,7 +5,6 @@ import { AppController } from './app.controller';
 import { AppDummy } from './app.dummy';
 import { AppJapanService } from './app.japan.service';
 import { AppService } from './app.service';
-import { Event } from './events/event.entity';
 import { EventsModule } from './events/events.module';
 import ormConfig from './config/orm.config';
 import ormConfigProd from './config/orm.config.prod';
@@ -19,34 +18,36 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       isGlobal: true,
       load: [ormConfig],
       expandVariables: true,
-      envFilePath: `${process.env.NODE_ENV ?? ''}.env`
+      envFilePath: `${process.env.NODE_ENV ?? ''}.env`,
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd
-    
-  }),
-  GraphQLModule.forRoot<ApolloDriverConfig>({
-    driver: ApolloDriver,
-    autoSchemaFile: true,
-    playground: true,
-  }),
-  AuthModule,
-  EventsModule
-],
+      useFactory:
+        process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd,
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      playground: true,
+    }),
+    AuthModule,
+    EventsModule,
+  ],
   controllers: [AppController],
   providers: [
     {
-    provide: AppService,
-    useClass: AppJapanService
-  }, 
-  {
-    provide: 'APP_NAME',
-    useValue: 'Nest Events Backend!'
-  }, 
-  {
-    provide: 'MESSAGE',
-    inject: [AppDummy],
-    useFactory: (app) => `${app.dummy()} Factory!`
-  }, AppDummy],
+      provide: AppService,
+      useClass: AppJapanService,
+    },
+    {
+      provide: 'APP_NAME',
+      useValue: 'Nest Events Backend!',
+    },
+    {
+      provide: 'MESSAGE',
+      inject: [AppDummy],
+      useFactory: (app) => `${app.dummy()} Factory!`,
+    },
+    AppDummy,
+  ],
 })
 export class AppModule {}

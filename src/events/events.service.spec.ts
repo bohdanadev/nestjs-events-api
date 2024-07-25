@@ -125,7 +125,9 @@ describe('EventsService', () => {
       expect(leftJoinSpy).toHaveBeenCalledWith('e.attendees', 'a');
 
       expect(whereSpy).toHaveBeenCalledTimes(1);
-      expect(whereSpy).toHaveBeenCalledWith('a.userId = :userId', { userId: 500 });
+      expect(whereSpy).toHaveBeenCalledWith('a.userId = :userId', {
+        userId: 500,
+      });
 
       expect(mockedPaginate).toHaveBeenCalledTimes(1);
       expect(mockedPaginate).toHaveBeenCalledWith(selectQb, {

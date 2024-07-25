@@ -1,30 +1,37 @@
-import { HttpCode, HttpStatus, INestApplication, ValidationPipe } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
-import * as request from "supertest";
-import { DataSource } from "typeorm";
-import { AppModule } from "./../src/app.module";
-import { User } from "./../src/auth/user.entity";
-import { loadFixtures as loadFixturesBase, tokenForUser as tokenForUserBase } from './utils';
+import {
+  HttpCode,
+  HttpStatus,
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import * as request from 'supertest';
+import { DataSource } from 'typeorm';
+import { AppModule } from './../src/app.module';
+import { User } from './../src/auth/user.entity';
+import {
+  loadFixtures as loadFixturesBase,
+  tokenForUser as tokenForUserBase,
+} from './utils';
 
 let app: INestApplication;
 let mod: TestingModule;
 let dataSource: DataSource;
 
-const loadFixtures = async (sqlFileName: string) => 
+const loadFixtures = async (sqlFileName: string) =>
   loadFixturesBase(dataSource, sqlFileName);
-
 
 const tokenForUser = (
   user: Partial<User> = {
     id: 1,
     username: 'e2e-test',
-  }
+  },
 ): string => tokenForUserBase(app, user);
 
 describe('Events (e2e)', () => {
   beforeEach(async () => {
     mod = await Test.createTestingModule({
-      imports: [AppModule]
+      imports: [AppModule],
     }).compile();
 
     app = mod.createNestApplication();
@@ -43,7 +50,7 @@ describe('Events (e2e)', () => {
     return request(app.getHttpServer())
       .get('/events')
       .expect(HttpStatus.OK)
-      .then(response => {
+      .then((response) => {
         expect(response.body.data.length).toBe(0);
       });
   });
@@ -54,10 +61,10 @@ describe('Events (e2e)', () => {
     return request(app.getHttpServer())
       .get('/events/1')
       .expect(HttpStatus.OK)
-      .then(response => {
+      .then((response) => {
         expect(response.body.id).toBe(1);
         expect(response.body.name).toBe('Interesting Party');
-      })
+      });
   });
 
   it('should return a list of (2) events', async () => {
@@ -66,12 +73,12 @@ describe('Events (e2e)', () => {
     return request(app.getHttpServer())
       .get(`/events`)
       .expect(HttpStatus.OK)
-      .then(response => {
+      .then((response) => {
         expect(response.body.first).toBe(1);
         expect(response.body.last).toBe(2);
         expect(response.body.limit).toBe(2);
         expect(response.body.total).toBe(2);
-      })
+      });
   });
 
   it('should throw a an error when creating event being unauthenticated', () => {
@@ -89,7 +96,7 @@ describe('Events (e2e)', () => {
       .set('Authorization', `Bearer ${tokenForUser()}`)
       .send({})
       .expect(HttpStatus.BAD_REQUEST)
-      .then(response => {
+      .then((response) => {
         expect(response.body).toMatchObject({
           statusCode: HttpStatus.BAD_REQUEST,
           message: [
@@ -97,16 +104,16 @@ describe('Events (e2e)', () => {
             'name must be a string',
             'description must be longer than or equal to 5 characters',
             'when must be a valid ISO 8601 date string',
-            'address must be longer than or equal to 5 characters'
+            'address must be longer than or equal to 5 characters',
           ],
-          error: 'Bad Request'
+          error: 'Bad Request',
         });
       });
   });
 
   it('should create an event', async () => {
     await loadFixtures('1-user.sql');
-    const when = (new Date).toISOString();
+    const when = new Date().toISOString();
 
     return request(app.getHttpServer())
       .post('/events')
@@ -115,21 +122,21 @@ describe('Events (e2e)', () => {
         name: 'E2e Event',
         description: 'A fake event from e2e tests',
         when,
-        address: 'Street 123'
+        address: 'Street 123',
       })
       .expect(HttpStatus.CREATED)
-      .then(_ => {
+      .then((_) => {
         return request(app.getHttpServer())
           .get('/events/1')
           .expect(HttpStatus.OK)
-          .then(response => {
+          .then((response) => {
             expect(response.body).toMatchObject({
               id: 1,
               name: 'E2e Event',
               description: 'A fake event from e2e tests',
-              address: 'Street 123'
+              address: 'Street 123',
             });
-          })
+          });
       });
   });
 
@@ -146,9 +153,12 @@ describe('Events (e2e)', () => {
 
     return request(app.getHttpServer())
       .patch('/events/1')
-      .set('Authorization', `Bearer ${tokenForUser({ id: 2, username: 'nasty' })}`)
+      .set(
+        'Authorization',
+        `Bearer ${tokenForUser({ id: 2, username: 'nasty' })}`,
+      )
       .send({
-        name: 'Updated event name'
+        name: 'Updated event name',
       })
       .expect(HttpStatus.FORBIDDEN);
   });
@@ -160,9 +170,10 @@ describe('Events (e2e)', () => {
       .patch('/events/1')
       .set('Authorization', `Bearer ${tokenForUser()}`)
       .send({
-        name: 'Updated event name'
+        name: 'Updated event name',
       })
-      .expect(HttpStatus.OK).then(response => {
+      .expect(HttpStatus.OK)
+      .then((response) => {
         expect(response.body.name).toBe('Updated event name');
       });
   });
@@ -173,11 +184,12 @@ describe('Events (e2e)', () => {
     return request(app.getHttpServer())
       .delete('/events/1')
       .set('Authorization', `Bearer ${tokenForUser()}`)
-      .expect(HttpStatus.NO_CONTENT).then(response => {
+      .expect(HttpStatus.NO_CONTENT)
+      .then((response) => {
         return request(app.getHttpServer())
           .get('/events/1')
           .expect(HttpStatus.NOT_FOUND);
-      })
+      });
   });
 
   it('should throw an error when removing an event of other user', async () => {
@@ -185,7 +197,10 @@ describe('Events (e2e)', () => {
 
     return request(app.getHttpServer())
       .delete('/events/1')
-      .set('Authorization', `Bearer ${tokenForUser({ id: 2, username: 'nasty' })}`)
+      .set(
+        'Authorization',
+        `Bearer ${tokenForUser({ id: 2, username: 'nasty' })}`,
+      )
       .expect(HttpStatus.FORBIDDEN);
   });
 
