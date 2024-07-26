@@ -57,4 +57,4 @@ jobs:
         run: npm install pm2@latest -g
 
       - name: Deploy with PM2
-        run: pm2 restart dist/main.js --name=main
+        run: pm2 restart dist/main.js --name=nestjs-events-api
