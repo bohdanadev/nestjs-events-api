@@ -49,7 +49,6 @@ jobs:
         run: docker compose up -d
 
       - name: Run tests
-        continue-on-error: true
         run: npm run test
 
       - name: Build application
@@ -59,4 +58,4 @@ jobs:
         run: npm install pm2@latest -g
 
       - name: Deploy with PM2
-        run: pm2 restart dist/main.js --name=main
+        run: pm2 restart dist/main.js --name=nestjs-events-api
