@@ -127,12 +127,12 @@ jobs:
           name: build-artifacts
           path: dist/
 
-      - name: Wait for MySQL
-        run: |
-          until mysqladmin ping -h mysql --silent; do
-            echo "Waiting for MySQL..."
-            sleep 3
-          done
+      #- name: Wait for MySQL
+      #  run: |
+      #    until mysqladmin ping -h mysql --silent; do
+      #      echo "Waiting for MySQL..."
+      #      sleep 3
+      #    done
 
       - name: Run tests
         run: npm run test
