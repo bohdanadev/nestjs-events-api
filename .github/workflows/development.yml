@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  checkout:
     runs-on: [self-hosted, dev]
     environment: dev
     strategy:
@@ -17,6 +17,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+  create-env:
+    runs-on: [self-hosted, dev]
+    environment: dev
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Set up .env file
+        uses: SpicyPizza/create-envfile@v2.0.3
+        with:
+          envkey_DB_HOST: ${{ vars.DB_HOST }}
+          envkey_DB_PORT: ${{ vars.DB_PORT }}
+          envkey_DB_USER: ${{ secrets.DB_USER }}
+          envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          envkey_DB_NAME: ${{ secrets.DB_NAME }}
+          envkey_DB_DROP_SCHEMA: ${{ vars.DB_DROP_SCHEMA }}
+          envkey_PORT: ${{ vars.PORT }}
+          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET}}
+          envkey_JWT_EXP: ${{ vars.JWT_EXP }}
+
+  docker-compose:
+    needs: create-env
+    runs-on: [self-hosted, dev]
+    environment: dev
+    steps:
+      - name: Setup Docker Compose
+        run: |
+          docker compose down
+          docker compose up -d
+
+  build:
+    needs: docker-compose
+    runs-on: [self-hosted, dev]
+    environment: dev
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -32,30 +71,74 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Set up .env file
-        uses: SpicyPizza/create-envfile@v2.0.3
-        with:
-          envkey_DB_HOST: ${{ vars.DB_HOST }}
-          envkey_DB_PORT: ${{ vars.DB_PORT }}
-          envkey_DB_USER: ${{ secrets.DB_USER }}
-          envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          envkey_DB_NAME: ${{ secrets.DB_NAME }}
-          envkey_DB_DROP_SCHEMA: ${{ vars.DB_DROP_SCHEMA }}
-          envkey_PORT: ${{ vars.PORT }}
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET}}
-          envkey_JWT_EXP: ${{ vars.JWT_EXP }}
+      - name: Build
+        run: npm run build --if-present
 
-      - name: Start database container
-        run: docker compose up -d
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: dev
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    services:
+      mysql:
+        image: mysql:8.0.23
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+          MYSQL_USER: ${{ secrets.DB_USER }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/
+
+      - name: Wait for MySQL
+        run: |
+          until mysqladmin ping -h mysql --silent; do
+            echo "Waiting for MySQL..."
+            sleep 3
+          done
 
       - name: Run tests
         run: npm run test
 
-      - name: Build application
-        run: npm run build --if-present
-
-      - name: Install PM2 global
-        run: npm install pm2@latest -g
-
-      - name: Deploy with PM2
-        run: pm2 restart dist/main.js --name=nestjs-events-api
+  deploy:
+    needs: test
+    uses: ./.github/workflows/reusable.yml
