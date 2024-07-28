@@ -16,8 +16,8 @@ jobs:
           name: build-artifacts
           path: dist/
 
-      - name: Install PM2 globally
-        run: npm install pm2@latest -g
+      #  - name: Install PM2 globally
+      #    run: npm install pm2@latest -g
 
       - name: Deploy with PM2
         run: |
