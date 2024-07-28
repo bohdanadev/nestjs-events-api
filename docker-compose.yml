@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   mysql:
@@ -7,16 +7,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: nest-events
     ports:
       - 3306:3306
-
-  postgres:
-    image: postgres:13.1
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: example
-    ports:
-      - 5432:5432
 
   adminer:
     image: adminer
