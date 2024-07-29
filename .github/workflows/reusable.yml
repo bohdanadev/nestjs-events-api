@@ -28,6 +28,7 @@ jobs:
           PORT: ${{ vars.PORT }}
           JWT_EXP: ${{ vars.JWT_EXP }}
         run: |
+          echo "DB_USER=${{env.DB_USER}}"
           if pm2 describe main > /dev/null; then
             pm2 restart main --update-env
           else
