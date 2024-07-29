@@ -28,5 +28,8 @@ jobs:
           PORT: ${{ vars.PORT }}
           JWT_EXP: ${{ vars.JWT_EXP }}
         run: |
-          pm2 stop nestjs-events-api || true
-          pm2 start dist/main.js --name=nestjs-events-api
+          if pm2 describe main > /dev/null; then
+            pm2 restart main --update-env
+          else
+            pm2 start dist/main.js --name main
+          fi
