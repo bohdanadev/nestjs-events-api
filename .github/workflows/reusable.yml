@@ -31,5 +31,5 @@ jobs:
           if pm2 describe main > /dev/null; then
             pm2 restart main --update-env
           else
-            pm2 start dist/main.js --name=nestjs-events-api
+            pm2 start dist/main.js --name main
           fi
