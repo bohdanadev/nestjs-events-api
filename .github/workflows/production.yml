@@ -36,18 +36,18 @@ jobs:
           envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET}}
           envkey_JWT_EXP: ${{ vars.JWT_EXP }}
 
-  docker-compose:
-    needs: create-env
-    runs-on: [self-hosted, prod]
-    environment: prod
-    steps:
-      - name: Setup Docker Compose
-        run: |
-          docker compose down
-          docker compose up -d
+  #docker-compose:
+  #  needs: create-env
+  #  runs-on: [self-hosted, prod]
+  #  environment: prod
+  #  steps:
+  #    - name: Setup Docker Compose
+  #      run: |
+  #        docker compose down
+  #        docker compose up -d
 
   build:
-    needs: docker-compose
+    #    needs: docker-compose
     runs-on: [self-hosted, prod]
     environment: prod
     strategy:
