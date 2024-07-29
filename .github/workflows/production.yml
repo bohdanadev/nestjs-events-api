@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
   create-env:
+    needs: checkout
     runs-on: [self-hosted, prod]
     environment: prod
     strategy:
@@ -47,7 +48,7 @@ jobs:
   #        docker compose up -d
 
   build:
-    #    needs: docker-compose
+    needs: create-env
     runs-on: [self-hosted, prod]
     environment: prod
     strategy:
