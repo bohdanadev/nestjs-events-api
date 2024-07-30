@@ -128,7 +128,6 @@ jobs:
           path: dist/
 
       - name: Run tests
-        continue-on-error: true
         run: npm run test
 
   deploy:
