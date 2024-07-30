@@ -36,9 +36,10 @@ jobs:
           path: dist/
 
       - name: Deploy with PM2
-        run: |
-          if pm2 describe main > /dev/null; then
-            pm2 restart main --update-env
-          else
-            pm2 start dist/main.js --name main
-          fi
+        run: pm2 start dist/main.js --name main
+        #run: |
+        #  if pm2 describe main > /dev/null; then
+        #    pm2 restart main --update-env
+        #  else
+        #    pm2 start dist/main.js --name main
+        #  fi
