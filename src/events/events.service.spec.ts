@@ -1,9 +1,9 @@
 //import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import * as paginator from './../pagination/paginator';
-import { Event } from './event.entity';
-import { EventsService } from './events.service';
+//import { getRepositoryToken } from '@nestjs/typeorm';
+//import { Repository } from 'typeorm';
+//import * as paginator from './../pagination/paginator';
+//import { Event } from './event.entity';
+//import { EventsService } from './events.service';
 //
 //jest.mock('./../pagination/paginator');
 //
