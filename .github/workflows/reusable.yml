@@ -22,6 +22,8 @@ jobs:
           envkey_PORT: ${{ vars.PORT }}
           envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET}}
           envkey_JWT_EXP: ${{ vars.JWT_EXP }}
+          envkey_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          envkey_SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           file_name: dev.env
           fail_on_empty: false
           sort_keys: false

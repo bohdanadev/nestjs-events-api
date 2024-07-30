@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && npm run sentry:sourcemaps",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "cross-env NODE_ENV=dev nest start",
     "start:dev": "cross-env NODE_ENV=dev nest start --watch",
@@ -17,7 +17,8 @@
     "test:watch": "cross-env NODE_ENV=e2e jest --watch",
     "test:cov": "cross-env NODE_ENV=e2e jest --coverage",
     "test:debug": "cross-env NODE_ENV=e2e node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "cross-env NODE_ENV=e2e jest --runInBand --config ./test/jest-e2e.json"
+    "test:e2e": "cross-env NODE_ENV=e2e jest --runInBand --config ./test/jest-e2e.json",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bohdana-k --project node-nestjs dist/ && sentry-cli sourcemaps upload --org bohdana-k --project node-nestjs dist/"
   },
   "dependencies": {
     "@nestjs/apollo": "^12.1.0",
@@ -31,6 +32,9 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.3.1",
     "@nestjs/typeorm": "^10.0.2",
+    "@sentry/cli": "^2.33.0",
+    "@sentry/nestjs": "^8.20.0",
+    "@sentry/profiling-node": "^8.20.0",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",

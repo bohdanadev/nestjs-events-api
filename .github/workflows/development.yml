@@ -35,8 +35,10 @@ jobs:
           envkey_DB_NAME: ${{ secrets.DB_NAME }}
           envkey_DB_DROP_SCHEMA: ${{ vars.DB_DROP_SCHEMA }}
           envkey_PORT: ${{ vars.PORT }}
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET}}
+          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           envkey_JWT_EXP: ${{ vars.JWT_EXP }}
+          envkey_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          envkey_SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
   docker-compose:
     needs: create-env
