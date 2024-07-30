@@ -34,16 +34,6 @@ jobs:
           path: dist/
 
       - name: Deploy with PM2
-        #env:
-        #  DB_USER: ${{ secrets.DB_USER }}
-        #  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        #  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-        #  DB_NAME: ${{ secrets.DB_NAME }}
-        #  DB_DROP_SCHEMA: ${{ vars.DB_DROP_SCHEMA }}
-        #  DB_HOST: ${{ vars.DB_HOST }}
-        #  DB_PORT: ${{ vars.DB_PORT }}
-        #  PORT: ${{ vars.PORT }}
-        #  JWT_EXP: ${{ vars.JWT_EXP }}
         run: |
           if pm2 describe main > /dev/null; then
             pm2 restart main --update-env
