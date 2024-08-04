@@ -1,39 +1,34 @@
 name: Reusable Deploy
 
-on: workflow_call
+on:
+  workflow_call:
+    inputs:
+      runner:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      artifact-name:
+        required: false
+        type: string
+        default: build-artifacts
 
 jobs:
   deploy:
-    runs-on: [self-hosted, dev]
-    environment: dev
+    runs-on: ${{ inputs.runner }}
+    environment: ${{ inputs.environment }}
     strategy:
       matrix:
         node-version: [20.x]
     steps:
-      - name: Set up .env file
-        uses: SpicyPizza/create-envfile@v2.0.3
-        with:
-          envkey_DB_HOST: ${{ vars.DB_HOST }}
-          envkey_DB_PORT: ${{ vars.DB_PORT }}
-          envkey_DB_USER: ${{ secrets.DB_USER }}
-          envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          envkey_DB_NAME: ${{ secrets.DB_NAME }}
-          envkey_DB_DROP_SCHEMA: ${{ vars.DB_DROP_SCHEMA }}
-          envkey_PORT: ${{ vars.PORT }}
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET}}
-          envkey_JWT_EXP: ${{ vars.JWT_EXP }}
-          envkey_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          envkey_SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          file_name: dev.env
-          fail_on_empty: false
-          sort_keys: false
-          directory: ./
-
-      - name: Download build artifacts
+      - name: Get Code
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
-          path: dist/
+          name: ${{ inputs.artifact-name }}
+
+      - name: List files
+        run: ls
 
       - name: Deploy with PM2
         run: |
