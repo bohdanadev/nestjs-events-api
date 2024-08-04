@@ -34,7 +34,7 @@ jobs:
       - name: Get Code
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.artifact-name  }}
+          name: ${{ inputs.artifact-name }}
 
       - name: List files
         run: ls
