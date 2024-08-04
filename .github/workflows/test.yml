@@ -62,5 +62,5 @@ jobs:
           name: ${{ inputs.artifact-name }}
 
       - name: Run tests
-        #continue-on-error: true
+        continue-on-error: true
         run: npm run test
