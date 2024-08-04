@@ -13,6 +13,15 @@ on:
         required: false
         type: string
         default: build-artifacts
+    secrets:
+      DB_USER:
+        required: true
+      DB_PASSWORD:
+        required: true
+      DB_NAME:
+        required: true
+      AUTH_SECRET:
+        required: true
 
 jobs:
   deploy:
@@ -31,6 +40,11 @@ jobs:
         run: ls
 
       - name: Deploy with PM2
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
         run: |
           if pm2 describe main > /dev/null; then
             pm2 restart main --update-env
