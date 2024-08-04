@@ -75,6 +75,9 @@ jobs:
     with:
       environment: prod
       artifact-name: build-artifacts
+    secrets:
+      MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      MYSQL_DATABASE: ${{ secrets.DB_NAME }}
 
   deploy:
     needs: test

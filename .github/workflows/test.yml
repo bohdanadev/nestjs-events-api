@@ -10,6 +10,11 @@ on:
         required: true
         type: string
         default: build-artifacts
+    secrets:
+      MYSQL_ROOT_PASSWORD:
+        required: true
+      MYSQL_DATABASE:
+        required: true
 
 jobs:
   test:
@@ -22,8 +27,8 @@ jobs:
       mysql:
         image: mysql:8.0.23
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
         options: >-
           --health-cmd "mysqladmin ping --silent"
           --health-interval 10s
