@@ -86,3 +86,8 @@ jobs:
       runner: prod
       environment: prod
       artifact-name: build-artifacts
+    secrets:
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
