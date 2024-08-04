@@ -123,3 +123,7 @@ jobs:
   deploy:
     needs: test
     uses: ./.github/workflows/reusable.yml
+    with:
+      runner: prod
+      environment: prod
+      artifact-name: build-artifacts
